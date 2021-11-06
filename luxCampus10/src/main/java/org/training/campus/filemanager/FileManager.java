@@ -66,7 +66,7 @@ public class FileManager {
 	private static void copy(File source, File destDir) throws IOException {
 		if (source.isDirectory()) {
 			File targetDir = new File(destDir, source.getName());
-			if(targetDir.mkdir()){
+			if (targetDir.mkdir()) {
 				for (File nestedFile : source.listFiles()) {
 					copy(nestedFile, targetDir);
 				}
@@ -92,10 +92,33 @@ public class FileManager {
 		}
 	}
 
+	public static void move(String from, String to) throws IOException {
+		copy(from, to);
+		remove(from);
+	}
+
+	public static void remove(String location) throws IOException {
+		File file = new File(location);
+		if (!file.exists())
+			throw new IllegalArgumentException(String.format("file or folder %s doesn't exist", location));
+		remove(file);
+	}
+
+	private static void remove(File source) throws IOException {
+		if (source.isDirectory()) {
+			for (File nestedFile : source.listFiles()) {
+				remove(nestedFile);
+			}
+		}
+		source.delete();
+	}
+
 	public static void main(String[] args) throws IOException {
-		//System.out.println(countFiles("C:/1"));
-		//System.out.println(countDirs("C:/1"));
-		copy("C:/1","D:/1");
+		// System.out.println(countFiles("C:/1"));
+		// System.out.println(countDirs("C:/1"));
+		// copy("C:/1", "D:/1");
+		// remove("D:/1");
+		// move("C:/1", "D:/1");
 	}
 
 }
