@@ -11,13 +11,22 @@ public class FileManager {
 
 	private static final int BUFFER_SIZE = 10 * 1024;
 
-	public static int countFiles(String path) {
-		File root = new File(path);
-		if (!root.exists())
-			throw new IllegalArgumentException(String.format("folder %s doesn't exist", path));
-		if (!root.isDirectory())
+	private static void checkIfExists(String path) {
+		File file = new File(path);
+		if (!file.exists())
+			throw new IllegalArgumentException(String.format("%s doesn't exist", path));
+	}
+	
+	private static void checkIfFolder(String path) {
+		File file = new File(path);
+		if (!file.isDirectory())
 			throw new IllegalArgumentException(String.format("%s should be folder, not a file", path));
-		return countFiles(root);
+	}
+
+	public static int countFiles(String path) {
+		checkIfExists(path);
+		checkIfFolder(path);
+		return countFiles(new File(path));
 	}
 
 	private static int countFiles(File file) {
@@ -33,12 +42,9 @@ public class FileManager {
 	}
 
 	public static int countDirs(String path) {
-		File root = new File(path);
-		if (!root.exists())
-			throw new IllegalArgumentException(String.format("folder %s doesn't exist", path));
-		if (!root.isDirectory())
-			throw new IllegalArgumentException(String.format("%s should be folder, not a file", path));
-		return countDirs(root);
+		checkIfExists(path);
+		checkIfFolder(path);
+		return countDirs(new File(path));
 	}
 
 	private static int countDirs(File file) {
@@ -52,15 +58,10 @@ public class FileManager {
 	}
 
 	public static void copy(String from, String to) throws IOException {
-		File source = new File(from);
-		if (!source.exists())
-			throw new IllegalArgumentException(String.format("file or folder %s doesn't exist", from));
-		File dest = new File(to);
-		if (!dest.exists())
-			throw new IllegalArgumentException(String.format("folder %s doesn't exist", to));
-		if (!dest.isDirectory())
-			throw new IllegalArgumentException(String.format("%s is not a folder", to));
-		copy(source, dest);
+		checkIfExists(from);
+		checkIfExists(to);
+		checkIfFolder(to);
+		copy(new File(from), new File(to));
 	}
 
 	private static void copy(File source, File destDir) throws IOException {
@@ -98,10 +99,7 @@ public class FileManager {
 	}
 
 	public static void remove(String location) throws IOException {
-		File file = new File(location);
-		if (!file.exists())
-			throw new IllegalArgumentException(String.format("file or folder %s doesn't exist", location));
-		remove(file);
+		remove(new File(location));
 	}
 
 	private static void remove(File source) throws IOException {
@@ -111,14 +109,6 @@ public class FileManager {
 			}
 		}
 		source.delete();
-	}
-
-	public static void main(String[] args) throws IOException {
-		// System.out.println(countFiles("C:/1"));
-		// System.out.println(countDirs("C:/1"));
-		// copy("C:/1", "D:/1");
-		// remove("D:/1");
-		// move("C:/1", "D:/1");
 	}
 
 }
