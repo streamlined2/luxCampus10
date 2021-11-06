@@ -25,8 +25,28 @@ public class FileManager {
 		return count;
 	}
 
+	public static int countDirs(String path) {
+		File root = new File(path);
+		if (!root.exists())
+			throw new IllegalArgumentException(String.format("wrong parameter: %s doesn't exist", path));
+		if (!root.isDirectory())
+			throw new IllegalArgumentException(String.format("wrong parameter: %s should be folder, not a file", path));
+		return countDirs(root);
+	}
+
+	private static int countDirs(File file) {
+		int count = 0;
+		for (File nestedFile : file.listFiles()) {
+			if (nestedFile.isDirectory()) {
+				count += countDirs(nestedFile) + 1;
+			}
+		}
+		return count;
+	}
+
 	public static void main(String[] args) {
 		System.out.println(countFiles("C:/1"));
+		System.out.println(countDirs("C:/1"));
 	}
 
 }
